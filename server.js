@@ -96,7 +96,7 @@ if (typeof rawClientId === 'string' && rawClientId.trim()) {
 return rawClientId.trim();
 }
 // 클라이언트가 아직 clientId를 안 보내면 임시로 socket.id 사용
-return socket '${socketId}';
+return `socket:${socketId}`;
 }
 
 function getIp(socket) {
