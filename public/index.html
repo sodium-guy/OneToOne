@@ -157,7 +157,18 @@
       starsEl.appendChild(d);
     }
 
-    const socket = io();
+    let clientId = localStorage.getItem("clientId");
+
+if (!clientId) {
+    clientId = crypto.randomUUID();
+    localStorage.setItem("clientId", clientId);
+}
+
+const socket = io({
+    auth: {
+        clientId: clientId
+    }
+});
     const statusBox = document.getElementById('statusBox');
     const threadWrap = document.getElementById('threadWrap');
     const timerBox = document.getElementById('timerBox');
