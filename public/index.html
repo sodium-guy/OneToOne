@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>인연 찾기 - 관리자</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>인연 찾기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #10142a;
@@ -14,182 +14,203 @@
     --gold: #e3b23c;
     --text: #f2ede2;
     --muted: #8892b0;
-    --line: rgba(227,178,60,.15);
   }
   * { box-sizing: border-box; }
   html, body {
-    margin: 0; min-height: 100vh;
+    margin: 0; padding: 0; height: 100%;
     background: radial-gradient(ellipse at top, #1a2050 0%, #10142a 60%);
-    color: var(--text); font-family: 'Pretendard', sans-serif;
+    color: var(--text);
+    font-family: 'Pretendard', sans-serif;
+    overflow-x: hidden;
   }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
-  h1 {
-    font-family: 'Noto Serif KR', serif; font-size: 24px; margin: 0 0 4px;
+  body {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px;
   }
-  .eyebrow { font-size: 11px; letter-spacing: .3em; color: var(--gold); text-transform: uppercase; font-weight: 700;}
-  .sub { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .dot {
+    position: absolute; width: 2px; height: 2px; background: var(--gold);
+    border-radius: 50%; opacity: .5;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle { 0%,100% { opacity: .15; } 50% { opacity: .8; } }
 
-  .panel {
-    background: var(--bg-panel); border: 1px solid var(--line); border-radius: 16px;
-    padding: 24px; margin-bottom: 20px;
+  .card {
+    position: relative; z-index: 1;
+    max-width: 440px; width: 100%;
+    text-align: center;
   }
-  .panel h2 {
-    font-size: 14px; letter-spacing: .05em; color: var(--gold); margin: 0 0 16px;
+  .eyebrow {
+    letter-spacing: .3em; text-transform: uppercase;
+    font-size: 11px; color: var(--gold); margin-bottom: 14px;
     font-weight: 600;
   }
-  input {
-    background: #0d1226; border: 1px solid var(--line); color: var(--text);
-    border-radius: 8px; padding: 10px 14px; font-size: 14px; width: 100%;
-    font-family: inherit;
+  h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 700; font-size: 30px; margin: 0 0 8px;
+    line-height: 1.3;
   }
-  input:focus { outline: none; border-color: var(--gold); }
-  button {
-    background: var(--gold); color: #1a1200; border: none; border-radius: 8px;
-    padding: 11px 18px; font-weight: 700; font-size: 14px; cursor: pointer;
-    font-family: inherit; transition: opacity .15s;
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 40px; }
+
+  .thread-wrap {
+    position: relative; width: 220px; height: 90px; margin: 0 auto 40px;
   }
-  button:hover { opacity: .85; }
-  button.secondary {
-    background: transparent; color: var(--text); border: 1px solid var(--line);
+  .knot {
+    position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--gold); transform: translateY(-50%);
+    box-shadow: 0 0 16px rgba(227,178,60,.6);
   }
-  button.danger { background: var(--thread); color: #fff; }
-  button:disabled { opacity: .35; cursor: not-allowed; }
-
-  .row { display: flex; gap: 10px; align-items: center; }
-  .row + .row { margin-top: 12px; }
-
-  #loginPanel { max-width: 380px; margin: 80px auto 0; text-align: center; }
-  #loginPanel .row { flex-direction: column; }
-  #loginError { color: var(--thread); font-size: 13px; margin-top: 10px; min-height: 16px; }
-
-  #main { display: none; }
-
-  .stat {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 10px 0; border-bottom: 1px solid var(--line);
-    font-size: 14px;
+  .knot.left { left: 0; animation: floatL 3.4s ease-in-out infinite; }
+  .knot.right { right: 0; animation: floatR 3.4s ease-in-out infinite; }
+  @keyframes floatL { 0%,100%{ transform: translateY(-50%) translateX(0);} 50%{ transform: translateY(-60%) translateX(4px);} }
+  @keyframes floatR { 0%,100%{ transform: translateY(-50%) translateX(0);} 50%{ transform: translateY(-40%) translateX(-4px);} }
+  .thread-wrap svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .thread-path {
+    fill: none; stroke: var(--thread); stroke-width: 1.5; stroke-dasharray: 4 5;
+    opacity: .6; animation: dash 2.5s linear infinite;
   }
-  .stat:last-child { border-bottom: none; }
-  .stat b { font-family: 'Noto Serif KR', serif; font-size: 20px; color: var(--gold); }
+  @keyframes dash { to { stroke-dashoffset: -40; } }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-weight: 500; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
-  .badge {
-    display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 11px;
+  .status-box {
+    background: var(--bg-panel);
+    border: 1px solid rgba(227,178,60,.15);
+    border-radius: 16px;
+    padding: 28px 24px;
+    min-height: 120px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px;
   }
-  .badge.idle { background: rgba(136,146,176,.15); color: var(--muted); }
-  .badge.matched { background: rgba(227,178,60,.15); color: var(--gold); }
+  .waiting-text { color: var(--muted); font-size: 15px; }
+  .pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--gold);
+    margin-bottom: 12px; animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: .3; transform: scale(1);} 50% { opacity: 1; transform: scale(1.4);} }
 
-  #msg { font-size: 13px; color: var(--gold); min-height: 18px; margin-top: 10px; }
+  .match-label { font-size: 12px; color: var(--muted); letter-spacing: .1em; }
+  .my-char {
+    font-family: 'Noto Serif KR', serif; font-weight: 700; font-size: 26px;
+    color: var(--gold); margin: 4px 0 18px;
+  }
+  .divider { width: 40px; height: 1px; background: var(--thread); margin: 4px 0 14px; opacity: .5;}
+  .partner-char {
+    font-family: 'Noto Serif KR', serif; font-weight: 700; font-size: 22px;
+    color: var(--text);
+  }
 
-  .timer-input { display: flex; gap: 8px; align-items: center; }
-  .timer-input input { width: 70px; text-align: center; }
-  .timer-input span { color: var(--muted); font-size: 13px; }
+  .timer {
+    margin-top: 24px; font-family: 'Noto Serif KR', serif;
+    font-size: 42px; font-weight: 700; letter-spacing: .05em;
+    color: var(--text);
+  }
+  .timer.warn { color: var(--thread); }
+  .timer-label { font-size: 12px; color: var(--muted); letter-spacing: .15em; margin-top: 4px; }
+
+  .count-badge {
+    position: fixed; top: 18px; right: 18px; z-index: 2;
+    font-size: 12px; color: var(--muted);
+    background: rgba(26,32,68,.7); padding: 6px 12px; border-radius: 100px;
+    border: 1px solid rgba(227,178,60,.15);
+  }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div id="loginPanel">
-      <div class="eyebrow">Admin</div>
-      <h1>관리자 로그인</h1>
-      <div class="sub">비밀번호를 입력하세요</div>
-      <div class="row">
-        <input type="password" id="pwInput" placeholder="비밀번호" />
-        <button onclick="login()">입장</button>
-      </div>
-      <div id="loginError"></div>
+  <div class="stars" id="stars"></div>
+  <div class="count-badge">현재 접속 <span id="count">0</span>명</div>
+
+  <div class="card">
+    <div class="eyebrow">Fated Match</div>
+    <h1>당신의 짝을<br/>찾고 있습니다</h1>
+    <p class="sub">붉은 실이 연결되면 화면에 표시됩니다</p>
+
+    <div class="thread-wrap" id="threadWrap">
+      <svg viewBox="0 0 220 90">
+        <path class="thread-path" d="M 7 45 Q 110 10 213 45" />
+      </svg>
+      <div class="knot left"></div>
+      <div class="knot right"></div>
     </div>
 
-    <div id="main">
-      <div class="eyebrow">Admin Console</div>
-      <h1>인연 찾기 관리자</h1>
-      <div class="sub">매칭과 타이머를 제어합니다</div>
+    <div class="status-box" id="statusBox">
+      <div class="pulse"></div>
+      <div class="waiting-text">매칭을 기다리는 중...</div>
+    </div>
 
-      <div class="panel">
-        <h2>현황</h2>
-        <div class="stat"><span>전체 접속</span><b id="statTotal">0</b></div>
-        <div class="stat"><span>대기 중</span><b id="statIdle">0</b></div>
-        <div class="stat"><span>매칭됨</span><b id="statMatched">0</b></div>
-      </div>
-
-      <div class="panel">
-        <h2>매칭 제어</h2>
-        <div class="row">
-          <button onclick="startMatching()">매칭 시작</button>
-          <button class="secondary" onclick="resetMatching()">다음 라운드로 초기화</button>
-        </div>
-        <div id="msg"></div>
-      </div>
-
-      <div class="panel">
-        <h2>타이머 제어</h2>
-        <div class="row timer-input">
-          <input type="number" id="minInput" value="3" min="0" /><span>분</span>
-          <input type="number" id="secInput" value="0" min="0" max="59" /><span>초</span>
-          <button onclick="startTimer()">타이머 시작</button>
-          <button class="secondary" onclick="stopTimer()">정지</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>접속자 목록</h2>
-        <table>
-          <thead><tr><th>ID</th><th>상태</th></tr></thead>
-          <tbody id="deviceTable"></tbody>
-        </table>
-      </div>
+    <div id="timerBox" style="display:none;">
+      <div class="timer" id="timerText">00:00</div>
+      <div class="timer-label">TIME REMAINING</div>
     </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    // 배경 별 생성
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 40; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot';
+      d.style.left = Math.random() * 100 + '%';
+      d.style.top = Math.random() * 100 + '%';
+      d.style.animationDelay = (Math.random() * 3) + 's';
+      starsEl.appendChild(d);
+    }
+
     const socket = io();
+    const statusBox = document.getElementById('statusBox');
+    const threadWrap = document.getElementById('threadWrap');
+    const timerBox = document.getElementById('timerBox');
+    const timerText = document.getElementById('timerText');
+    const countEl = document.getElementById('count');
 
-    function login() {
-      const pw = document.getElementById('pwInput').value;
-      socket.emit('adminLogin', pw, (res) => {
-        if (res.ok) {
-          document.getElementById('loginPanel').style.display = 'none';
-          document.getElementById('main').style.display = 'block';
-        } else {
-          document.getElementById('loginError').textContent = res.error;
-        }
-      });
-    }
-    document.getElementById('pwInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') login();
+    socket.on('participantCount', (n) => { countEl.textContent = n; });
+
+    socket.on('matched', ({ me, partner }) => {
+      threadWrap.style.opacity = '0.25';
+      statusBox.innerHTML = `
+        <div class="match-label">당신은</div>
+        <div class="my-char">${me}</div>
+        <div class="divider"></div>
+        <div class="match-label">당신의 짝꿍은</div>
+        <div class="partner-char">${partner}</div>
+      `;
     });
 
-    function startMatching() { socket.emit('startMatching'); }
-    function resetMatching() { socket.emit('resetMatching'); }
-    function startTimer() {
-      const min = Number(document.getElementById('minInput').value) || 0;
-      const sec = Number(document.getElementById('secInput').value) || 0;
-      const total = min * 60 + sec;
-      if (total <= 0) return alert('시간을 입력하세요.');
-      socket.emit('startTimer', total);
-    }
-    function stopTimer() { socket.emit('stopTimer'); }
-
-    socket.on('adminMessage', (text) => {
-      document.getElementById('msg').textContent = text;
+    socket.on('matchWaiting', () => {
+      statusBox.innerHTML = `
+        <div class="pulse"></div>
+        <div class="waiting-text">이번 라운드는 인원 초과로 대기 중입니다</div>
+      `;
     });
 
-    socket.on('deviceList', (list) => {
-      const idle = list.filter(d => d.status === 'idle').length;
-      const matched = list.filter(d => d.status === 'matched').length;
-      document.getElementById('statTotal').textContent = list.length;
-      document.getElementById('statIdle').textContent = idle;
-      document.getElementById('statMatched').textContent = matched;
+    socket.on('matchReset', () => {
+      threadWrap.style.opacity = '1';
+      statusBox.innerHTML = `
+        <div class="pulse"></div>
+        <div class="waiting-text">매칭을 기다리는 중...</div>
+      `;
+      timerBox.style.display = 'none';
+    });
 
-      const tbody = document.getElementById('deviceTable');
-      tbody.innerHTML = list.map(d => `
-        <tr>
-          <td>${d.id.slice(0,8)}</td>
-          <td><span class="badge ${d.status}">${d.status === 'idle' ? '대기' : '매칭됨'}</span></td>
-        </tr>
-      `).join('');
+    let timerInterval = null;
+    socket.on('timerStatus', (state) => {
+      clearInterval(timerInterval);
+      if (!state.running || !state.endTime) {
+        timerBox.style.display = 'none';
+        return;
+      }
+      timerBox.style.display = 'block';
+      const tick = () => {
+        const remain = Math.max(0, Math.round((state.endTime - Date.now()) / 1000));
+        const m = String(Math.floor(remain / 60)).padStart(2, '0');
+        const s = String(remain % 60).padStart(2, '0');
+        timerText.textContent = `${m}:${s}`;
+        timerText.classList.toggle('warn', remain <= 10);
+        if (remain <= 0) clearInterval(timerInterval);
+      };
+      tick();
+      timerInterval = setInterval(tick, 250);
     });
   </script>
 </body>
