@@ -430,7 +430,8 @@ broadcastParticipantCount();
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`서버 실행 중: http://localhost:${PORT}`));  ['선재', '임솔'],
+server.listen(PORT, () => console.log(`서버 실행 중: http://localhost:${PORT}`));  
+  ['선재', '임솔'],
   ['로미오', '줄리엣'],
   ['춘향', '몽룡'],
   ['온달', '평강'],
@@ -444,7 +445,7 @@ server.listen(PORT, () => console.log(`서버 실행 중: http://localhost:${POR
   ['하늘', '바다'],
   ['해', '달'],
   ['빛', '그림자'],
-];
+;
 
 // ---------------------------------------------
 // 상태
