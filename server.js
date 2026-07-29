@@ -3,7 +3,7 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
-​const app = express();
+const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 ​// public 폴더가 있으면 그걸 쓰고, 없으면 현재 폴더를 씀
